@@ -113,7 +113,7 @@ export default function BusinessIntroducerInterface({ onLogout, setIsSidebarOpen
 
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'finances' | 'profile'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'profile'>('dashboard');
   const [globalCurrency, setGlobalCurrency] = useState('XOF');
 
   const [apporteurProfile, setApporteurProfile] = useState<any>(null);
@@ -241,10 +241,8 @@ export default function BusinessIntroducerInterface({ onLogout, setIsSidebarOpen
   // Tab switching from location
   useEffect(() => {
     const path = location.pathname;
-    if (path === '/' || path === '/partner' || path === '/partner/dashboard') {
+    if (path === '/' || path === '/partner' || path === '/partner/dashboard' || path === '/partner/finances') {
       setActiveTab('dashboard');
-    } else if (path === '/partner/finances') {
-      setActiveTab('finances');
     } else if (path === '/partner/profile') {
       setActiveTab('profile');
     }
@@ -479,7 +477,7 @@ export default function BusinessIntroducerInterface({ onLogout, setIsSidebarOpen
     return matchesName || matchesUsername || matchesFiliere;
   });
 
-  const handleNavigateTo = (tab: 'dashboard' | 'finances' | 'profile', path: string) => {
+  const handleNavigateTo = (tab: 'dashboard' | 'profile', path: string) => {
     setActiveTab(tab);
     navigate(path);
   };
@@ -555,19 +553,6 @@ export default function BusinessIntroducerInterface({ onLogout, setIsSidebarOpen
             </button>
 
             <button
-              onClick={() => handleNavigateTo('finances', '/partner/finances')}
-              className={cn(
-                "flex items-center gap-2 px-5 py-3 text-xs font-black rounded-full transition-all duration-300 shrink-0",
-                activeTab === 'finances'
-                  ? "bg-gradient-to-r from-[#2563EB] to-[#7C3AED] text-white shadow-[0_6px_15px_rgba(37,99,235,0.25)]"
-                  : "text-gray-500 hover:text-gray-900"
-              )}
-            >
-              <Coins className="w-4 h-4" />
-              <span>Mes Finances</span>
-            </button>
-
-            <button
               onClick={() => handleNavigateTo('profile', '/partner/profile')}
               className={cn(
                 "flex items-center gap-2 px-5 py-3 text-xs font-black rounded-full transition-all duration-300 shrink-0",
@@ -580,14 +565,6 @@ export default function BusinessIntroducerInterface({ onLogout, setIsSidebarOpen
               <span>Mon Profil</span>
             </button>
           </div>
-
-          <button
-            onClick={onLogout}
-            className="hidden sm:flex items-center justify-center gap-2 px-5 py-2.5 bg-[#F4F7F6] hover:bg-red-50/20 text-red-600 font-bold text-xs rounded-full shadow-[3px_3px_8px_rgba(239,68,68,0.1),-3px_-3px_8px_rgba(255,255,255,0.95)] transition active:scale-95 shrink-0"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Fermer la session</span>
-          </button>
         </div>
       )}
 
@@ -601,50 +578,75 @@ export default function BusinessIntroducerInterface({ onLogout, setIsSidebarOpen
           {/* TAB 1: DASHBOARD */}
           {activeTab === 'dashboard' && (
             <div className="space-y-8 animate-in fade-in duration-300">
-              {/* Core metrics matching Apporteur scale */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-[#F4F7F6] rounded-[24px] p-6 shadow-[8px_8px_24px_rgba(165,180,252,0.18),-8px_-8px_24px_rgba(255,255,255,0.95)] flex items-center gap-4 transition-all duration-300 hover:scale-[1.01]">
-                  <div className="p-4 bg-[#F4F7F6] text-blue-600 rounded-2xl shadow-[inset_3px_3px_6px_rgba(165,180,252,0.15),inset_-3px_-3px_6px_rgba(255,255,255,0.9)]">
-                    <Users className="w-6 h-6" />
-                  </div>
+              {/* ÉTAGE 1 (Chiffres clés) - VOTRE CODE PROMO & COMMISSION CUMULATIVE */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* La carte "VOTRE CODE PROMO" */}
+                <div className="bg-[#F4F7F6] rounded-[32px] p-8 shadow-[8px_8px_24px_rgba(165,180,252,0.18),-8px_-8px_24px_rgba(255,255,255,0.95)] flex flex-col justify-between hover:scale-[1.01] transition duration-300">
                   <div>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest font-mono">Mes Abonnés Rattachés</p>
-                    <p className="text-2xl font-black text-gray-900 mt-0.5">{promoSubscribers.length}</p>
+                    <div className="flex items-center gap-2 mb-4">
+                      <Award className="w-5 h-5 text-indigo-650" />
+                      <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest font-mono">CODE PARRAINAGE EXCLUSIF</span>
+                    </div>
+                    <h3 className="text-xl font-black text-gray-950 tracking-tight mb-2">Votre Code Promo</h3>
+                    <p className="text-xs text-gray-500 leading-relaxed font-semibold">
+                      Toute personne s'inscrivant avec ce code promo est rattachée à vous, générant automatiquement vos commissions sur chaque transaction d'achat de licence.
+                    </p>
+                  </div>
+                  
+                  <div className="mt-6 flex items-center justify-between bg-[#F4F7F6] px-5 py-4 rounded-2xl shadow-[inset_3px_3px_8px_rgba(165,180,252,0.14),inset_-3px_-3px_8px_rgba(255,255,255,0.95)]">
+                    <span className="font-mono text-xl tracking-wider uppercase font-black bg-gradient-to-r from-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">{promoCodeRaw || 'AUCUN'}</span>
+                    <button 
+                      onClick={() => promoCodeRaw && handleCopyPromo(promoCodeRaw)}
+                      className="text-xs font-black bg-gradient-to-r from-[#2563EB] to-[#7C3AED] text-white px-5 py-2.5 rounded-full hover:shadow-[0_4px_12px_rgba(37,99,235,0.25)] transition active:scale-95 uppercase tracking-wider flex items-center gap-2"
+                    >
+                      {copied ? (
+                        <>
+                          <CheckCircle className="w-4 h-4" />
+                          <span>Copié</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-4 h-4" />
+                          <span>Copier [STZ01]</span>
+                        </>
+                      )}
+                    </button>
                   </div>
                 </div>
 
-                <div className="bg-[#F4F7F6] rounded-[24px] p-6 shadow-[8px_8px_24px_rgba(165,180,252,0.18),-8px_-8px_24px_rgba(255,255,255,0.95)] flex items-center gap-4 transition-all duration-300 hover:scale-[1.01]">
-                  <div className="p-4 bg-[#F4F7F6] text-emerald-600 rounded-2xl shadow-[inset_3px_3px_6px_rgba(165,180,252,0.15),inset_-3px_-3px_6px_rgba(255,255,255,0.9)]">
-                    <CheckCircle className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest font-mono">Abonnés Actifs</p>
-                    <p className="text-2xl font-black text-gray-900 mt-0.5">{activeStudents.length}</p>
-                  </div>
-                </div>
+                {/* La carte "COMMISSION CUMULATIVE" (incluant jauge) */}
+                <div className="bg-[#F4F7F6] rounded-[32px] p-8 shadow-[8px_8px_24px_rgba(165,180,252,0.18),-8px_-8px_24px_rgba(255,255,255,0.95)] flex flex-col md:flex-row items-center justify-between gap-6 hover:scale-[1.01] transition duration-300">
+                  <div className="space-y-4 text-center md:text-left flex-1 w-full">
+                    <div>
+                      <div className="flex items-center gap-2 mb-2 justify-center md:justify-start">
+                        <Coins className="w-5 h-5 text-emerald-650" />
+                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest font-mono">Commission Cumulative</span>
+                      </div>
+                      <h3 className="text-2xl font-mono font-black text-gray-950">{formatCurrency(totalGainsCumules, globalCurrency)}</h3>
+                    </div>
 
-                <div className="bg-[#F4F7F6] rounded-[24px] p-6 shadow-[8px_8px_24px_rgba(165,180,252,0.18),-8px_-8px_24px_rgba(255,255,255,0.95)] flex items-center gap-4 transition-all duration-300 hover:scale-[1.01]">
-                  <div className="p-4 bg-[#F4F7F6] text-purple-600 rounded-2xl shadow-[inset_3px_3px_6px_rgba(165,180,252,0.15),inset_-3px_-3px_6px_rgba(255,255,255,0.9)]">
-                    <Coins className="w-6 h-6" />
+                    <div className="grid grid-cols-2 gap-4 text-left pt-2">
+                      <div className="bg-[#F4F7F6] p-3 rounded-2xl shadow-[inset_2px_2px_5px_rgba(165,180,252,0.08),inset_-2px_-2px_5px_rgba(255,255,255,0.95)]">
+                        <p className="text-[9px] text-gray-400 font-mono font-black uppercase">Reçus (Retraits)</p>
+                        <p className="text-xs font-mono font-black text-rose-600 mt-1">-{formatCurrency(totalPayoutsReceived, globalCurrency)}</p>
+                      </div>
+                      <div className="bg-[#F4F7F6] p-3 rounded-2xl shadow-[inset_2px_2px_5px_rgba(165,180,252,0.08),inset_-2px_-2px_5px_rgba(255,255,255,0.95)]">
+                        <p className="text-[9px] text-gray-400 font-mono font-black uppercase">Solde restant</p>
+                        <p className="text-xs font-mono font-black text-emerald-700 mt-1">{formatCurrency(remainingBalance, globalCurrency)}</p>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest font-mono">Mes Commissions Cumulées</p>
-                    <p className="text-xl font-black text-indigo-950 font-mono mt-0.5">{formatCurrency(totalGainsCumules, globalCurrency)}</p>
-                  </div>
-                </div>
 
-                <div className="bg-[#F4F7F6] rounded-[24px] p-6 shadow-[8px_8px_24px_rgba(165,180,252,0.18),-8px_-8px_24px_rgba(255,255,255,0.95)] flex items-center gap-4 transition-all duration-300 hover:scale-[1.01]">
-                  <div className="p-4 bg-[#F4F7F6] text-indigo-650 rounded-2xl shadow-[inset_3px_3px_6px_rgba(165,180,252,0.15),inset_-3px_-3px_6px_rgba(255,255,255,0.9)]">
-                    <Calendar className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest font-mono">Rattachés ce mois</p>
-                    <p className="text-2xl font-black text-gray-900 mt-0.5">{monthlyInscriptions.length}</p>
+                  <div className="shrink-0 flex flex-col items-center">
+                    <NeumorphicCircularProgress 
+                      percentage={promoSubscribers.length > 0 ? Math.round((activeStudents.length / promoSubscribers.length) * 100) : 0} 
+                    />
+                    <span className="text-[9px] text-gray-400 font-mono mt-2 font-black uppercase tracking-widest">{activeStudents.length} / {promoSubscribers.length} Abonnés Actifs</span>
                   </div>
                 </div>
               </div>
 
-              {/* ACCÈS AUX TABLEAUX DE BORD DE L'APPLICATION (Student space / simulators) */}
+              {/* ÉTAGE 2 (Accès aux Tableaux de Bord de l'Application) - CONSERVE PARFAITEMENT INTACT */}
               <div className="bg-[#F4F7F6] rounded-[32px] p-6 sm:p-8 shadow-[8px_8px_24px_rgba(165,180,252,0.18),-8px_-8px_24px_rgba(255,255,255,0.95)] space-y-6">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
@@ -684,224 +686,118 @@ export default function BusinessIntroducerInterface({ onLogout, setIsSidebarOpen
                 )}
               </div>
 
-              {/* Promo section */}
+              {/* ÉTAGE 3 (Historiques & Suivi) EN DEUX COLONNES MAJEURES */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="bg-gradient-to-br from-[#2563EB] via-[#4F46E5] to-[#7C3AED] p-8 rounded-[32px] text-white shadow-[0_12px_28px_rgba(37,99,235,0.3)] flex flex-col justify-between hover:shadow-[0_16px_32px_rgba(37,99,235,0.35)] transition duration-300 min-h-[220px]">
-                  <div>
-                    <Award className="w-8 h-8 text-indigo-200 mb-4" />
-                    <h3 className="text-lg font-black tracking-tight mb-2 uppercase">Code Parrainage Exclusif</h3>
-                    <p className="text-xs text-white/80 leading-relaxed font-semibold">Toute personne s'inscrivant avec ce code est rattachée à vous, générant automatiquement votre pourcentage sur chaque transaction d'achat de licence.</p>
-                  </div>
-                  
-                  <div className="mt-6 flex items-center justify-between bg-white/10 px-4 py-3 rounded-2xl border border-white/10">
-                    <span className="font-mono text-sm tracking-wider uppercase font-black text-indigo-100">{promoCodeRaw || 'AUCUN'}</span>
-                    <button 
-                      onClick={() => promoCodeRaw && handleCopyPromo(promoCodeRaw)}
-                      className="text-xs font-black bg-white text-indigo-950 px-5 py-2 rounded-full hover:bg-slate-100 transition active:scale-95 shadow-md uppercase tracking-wider"
-                    >
-                      Copier
-                    </button>
-                  </div>
-                </div>
-
-                <div className="bg-[#F4F7F6] rounded-[32px] p-8 shadow-[8px_8px_24px_rgba(165,180,252,0.18),-8px_-8px_24px_rgba(255,255,255,0.95)] flex flex-col md:flex-row items-center justify-between gap-6 min-h-[220px]">
-                  <div className="space-y-3 max-w-xs text-center md:text-left">
-                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest font-mono bg-gray-200/50 px-2.5 py-1 rounded-full">
-                      Performance Mensuelle
-                    </span>
-                    <h3 className="text-lg font-black text-gray-950 tracking-tight mt-2">Rejoignants de ce mois</h3>
-                    <p className="text-xs text-gray-400 leading-relaxed font-semibold">Suivez l'efficacité commerciale de votre promotion pour le mois de {now.toLocaleDateString('fr-FR', { month: 'long' })}.</p>
+                {/* Section gauche : Historique des ventes / abonnés parrainés */}
+                <div className="bg-[#F4F7F6] rounded-[32px] p-6 shadow-[8px_8px_24px_rgba(165,180,252,0.18),-8px_-8px_24px_rgba(255,255,255,0.95)] flex flex-col space-y-4">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-2 border-b border-gray-100/50">
+                    <div className="space-y-1">
+                      <h3 className="text-base font-black text-gray-950 tracking-tight uppercase">Ventes & Abonnés</h3>
+                      <p className="text-[11px] text-gray-400 font-semibold">Suivi des abonnements rattachés à votre code promo.</p>
+                    </div>
                     
-                    <div className="pt-2">
-                      <button 
-                        onClick={() => handleNavigateTo('finances', '/partner/finances')}
-                        className="text-xs font-black text-indigo-650 hover:text-[#2563EB] tracking-wide inline-flex items-center gap-1 hover:underline"
-                      >
-                        Consulter mon solde <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
+                    <div className="relative w-full sm:max-w-[200px]">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+                      <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Rechercher par nom..."
+                        className="w-full pl-8 pr-3 py-2 text-[11px] bg-[#F4F7F6] border-none shadow-[inset_2px_2px_5px_rgba(165,180,252,0.1),inset_-2px_-2px_5px_rgba(255,255,255,0.95)] focus:ring-2 focus:ring-[#2563EB]/45 outline-none rounded-xl transition-all duration-300 font-bold"
+                      />
                     </div>
                   </div>
 
-                  <div className="shrink-0">
-                    <NeumorphicCircularProgress 
-                      percentage={promoSubscribers.length > 0 ? Math.round((activeStudents.length / promoSubscribers.length) * 100) : 0} 
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 2: FINANCES */}
-          {activeTab === 'finances' && (
-            <div className="space-y-8 animate-in fade-in duration-300">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h3 className="text-2xl font-black text-gray-950 leading-tight">Relevé Financier Partagé</h3>
-                  <p className="text-gray-500 text-xs font-bold mt-1.5">
-                    Visualisez uniquement les affiliés rattachés à votre code promo <span className="font-mono text-indigo-700 bg-indigo-50/70 px-1.5 py-0.5 rounded-lg border border-indigo-100">[{promoCodeRaw}]</span> et l'argent cumulé correspond à vos pourcentages.
-                  </p>
-                </div>
-                <div className="bg-[#F4F7F6] shadow-[4px_4px_12px_rgba(165,180,252,0.15),-4px_-4px_12px_rgba(255,255,255,0.95)] rounded-2xl px-5 py-3 flex items-center gap-3 shrink-0">
-                  <Coins className="w-5 h-5 text-[#2563EB]" />
-                  <div>
-                    <p className="text-[9px] text-gray-400 uppercase tracking-widest font-black leading-none font-mono">Commission cumulative</p>
-                    <p className="text-sm font-black text-indigo-950 mt-1 font-mono">{formatCurrency(totalGainsCumules, globalCurrency)}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Financial metric counts for Apporteur */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-[#F4F7F6] rounded-[24px] p-6 shadow-[8px_8px_24px_rgba(165,180,252,0.18),-8px_-8px_24px_rgba(255,255,255,0.95)] border-0 transition-all duration-300 hover:scale-[1.01]">
-                  <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest block font-mono">Affiliés payants</span>
-                  <span className="text-2xl font-black text-gray-950 block mt-1">{paidTrans.length}</span>
-                  <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md font-bold mt-3 inline-block">Licences confirmées</span>
-                </div>
-
-                <div className="bg-[#F4F7F6] rounded-[24px] p-6 shadow-[8px_8px_24px_rgba(165,180,252,0.18),-8px_-8px_24px_rgba(255,255,255,0.95)] border-0 transition-all duration-300 hover:scale-[1.01]">
-                  <span className="text-[10px] text-indigo-500 font-black uppercase tracking-widest block font-mono">Mon Pourcentage Cumulé (Total)</span>
-                  <span className="text-2xl font-black text-indigo-650 block mt-1 font-mono">{formatCurrency(totalGainsCumules, globalCurrency)}</span>
-                  <span className="text-[10px] text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-md font-bold mt-3 inline-block font-mono">Commission acquise</span>
-                </div>
-
-                <div className="bg-[#F4F7F6] rounded-[24px] p-6 shadow-[8px_8px_24px_rgba(165,180,252,0.18),-8px_-8px_24px_rgba(255,255,255,0.95)] border-0 transition-all duration-300 hover:scale-[1.01]">
-                  <span className="text-[10px] text-rose-500 font-black uppercase tracking-widest block font-mono">Règlements Reçus (Retraits)</span>
-                  <span className="text-2xl font-black text-rose-600 block mt-1 font-mono">{formatCurrency(totalPayoutsReceived, globalCurrency)}</span>
-                  <span className="text-[10px] text-rose-700 bg-rose-50 px-2.5 py-1 rounded-md font-bold mt-3 inline-block font-mono">Versé par l'administration</span>
-                </div>
-
-                <div className="bg-gradient-to-br from-white/40 to-emerald-50/30 rounded-[24px] p-6 shadow-[8px_8px_24px_rgba(16,185,129,0.13),-8px_-8px_24px_rgba(255,255,255,0.95)] border border-emerald-100 transition-all duration-300 hover:scale-[1.01]">
-                  <span className="text-[10px] text-emerald-600 font-black uppercase tracking-widest block font-mono">Solde Restant à Toucher</span>
-                  <span className="text-2xl font-black text-emerald-700 block mt-1 font-mono">{formatCurrency(remainingBalance, globalCurrency)}</span>
-                  <span className="text-[10px] text-emerald-800 bg-emerald-100/50 px-2.5 py-1 rounded-md font-black mt-3 inline-block font-mono">Avoir disponible</span>
-                </div>
-              </div>
-
-              {/* Transactions filtered exclusively by promo code */}
-              <div className="bg-[#F4F7F6] rounded-[32px] p-6 sm:p-8 shadow-[8px_8px_24px_rgba(165,180,252,0.18),-8px_-8px_24px_rgba(255,255,255,0.95)] space-y-6">
-                <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 pb-2">
-                  <h3 className="text-lg font-black text-gray-950 tracking-tight">Historique des ventes / abonnés parrainés</h3>
-                  <div className="relative max-w-sm w-full">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input
-                      type="text"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      placeholder="Rechercher par nom ou login..."
-                      className="w-full pl-10 pr-4 py-3 text-xs bg-[#F4F7F6] border-none shadow-[inset_3px_3px_6px_rgba(165,180,252,0.14),inset_-3px_-3px_6px_rgba(255,255,255,0.9)] focus:ring-2 focus:ring-[#2563EB]/45 outline-none rounded-2xl transition-all duration-300 font-bold"
-                    />
-                  </div>
-                </div>
-
-                {paidTrans.length === 0 ? (
-                  <div className="py-12 text-center bg-[#F4F7F6] shadow-[inset_3px_3px_8px_rgba(165,180,252,0.08),inset_-3px_-3px_8px_rgba(255,255,255,0.9)] rounded-[24px] text-sm text-gray-400 font-bold italic">
-                    Aucun abonnement payant n'a été rattaché à ce code promo pour le moment.
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto rounded-3xl bg-[#F4F7F6] shadow-[inset_4px_4px_10px_rgba(165,180,252,0.08),inset_-4px_-4px_10px_rgba(255,255,255,0.9)] p-2">
-                    <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="text-[10px] font-black text-gray-500 uppercase tracking-widest select-none bg-indigo-50/10">
-                          <th className="py-4 px-5">Affilié</th>
-                          <th className="py-4 px-5">Abonnement / Licence</th>
-                          <th className="py-4 px-5">Date de début</th>
-                          <th className="py-4 px-5 text-center">Montant d'achat</th>
-                          <th className="py-4 px-5 text-center">Taux Comm. Code</th>
-                          <th className="py-4 px-5 text-right">Votre Commission</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100/50 text-xs font-bold text-gray-700">
-                        {paidTrans
-                          .filter(t => {
-                            if (!searchTerm) return true;
-                            const term = searchTerm.toLowerCase();
-                            return t.userDisplayName?.toLowerCase().includes(term) || 
-                                   t.username?.toLowerCase().includes(term);
-                          })
-                          .map((t, idx) => {
-                            // Find active / passive licence configuration for this licenseId
-                            const filParams = licenseParamsList.find(p => p.id === t.licenseId);
-                            const activePct = filParams?.promoCommission ?? t.ratePromo ?? 10;
-                            return (
-                              <tr key={t.id || idx} className="hover:bg-white/20 transition-all duration-200">
-                                <td className="py-4 px-5">
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-9 h-9 rounded-2xl bg-[#F4F7F6] shadow-[3px_3px_8px_rgba(165,180,252,0.12),-3px_-3px_8px_rgba(255,255,255,0.95)] text-indigo-650 font-black text-xs flex items-center justify-center border border-white/40">
-                                      {t.userDisplayName?.[0]?.toUpperCase() || t.username?.[0]?.toUpperCase()}
-                                    </div>
-                                    <div>
-                                      <p className="font-black text-gray-950">{t.userDisplayName || t.username}</p>
-                                      <p className="text-[10px] text-gray-400 font-mono">@{t.username}</p>
-                                    </div>
-                                  </div>
-                                </td>
-                                <td className="py-4 px-5">
-                                  <span className="bg-[#F4F7F6] shadow-[2px_2px_5px_rgba(165,180,252,0.1),-2px_-2px_5px_rgba(255,255,255,0.95)] px-3 py-1.5 rounded-xl text-[10px] text-indigo-750 font-black uppercase tracking-wider border border-white/50">{t.licenseName || t.licenseId || 'Standard'}</span>
-                                </td>
-                                <td className="py-4 px-5 text-gray-500 font-bold">
-                                  {t.date ? (
-                                    t.date?.toDate ? t.date.toDate().toLocaleDateString('fr-FR') : new Date(t.date).toLocaleDateString('fr-FR')
-                                  ) : 'Indéterminée'}
-                                </td>
-                                <td className="py-4 px-5 text-center font-mono text-gray-800 font-bold">
-                                  {formatCurrency(t.amountPaid, globalCurrency)}
-                                </td>
-                                <td className="py-4 px-5 text-center">
-                                  <span className="px-2.5 py-1 bg-[#F4F7F6] shadow-[inset_1.5px_1.5px_3px_rgba(165,180,252,0.1),inset_-1.5px_-1.5px_3px_rgba(255,255,255,0.9)] rounded-lg text-indigo-650 font-black text-[10px] font-mono">
-                                    {activePct}%
-                                  </span>
-                                </td>
-                                <td className="py-4 px-5 text-right font-black text-emerald-700 font-mono text-sm">
-                                  {formatCurrency(t.commissionPromo, globalCurrency)}
-                                </td>
-                              </tr>
-                            );
-                          })}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-
-              {/* Payouts list for Apporteur */}
-              <div className="bg-[#F4F7F6] rounded-[32px] p-6 sm:p-8 shadow-[8px_8px_24px_rgba(165,180,252,0.18),-8px_-8px_24px_rgba(255,255,255,0.95)] space-y-6">
-                <h3 className="text-base font-black text-gray-950 pb-2 tracking-tight uppercase">Historique de vos Reversements (Reçus)</h3>
-                {payouts.length === 0 ? (
-                  <p className="text-xs text-gray-400 font-bold italic text-center py-8 bg-[#F4F7F6] shadow-[inset_3px_3px_6px_rgba(190,24,74,0.04),inset_-3px_-3px_6px_rgba(255,255,255,0.9)] rounded-[24px]">
-                    Aucun virement d'honoraires n'a encore été reversé pour votre compte promo.
-                  </p>
-                ) : (
-                  <div className="overflow-x-auto rounded-3xl bg-[#F4F7F6] shadow-[inset_4px_4px_10px_rgba(165,180,252,0.08),inset_-4px_-4px_10px_rgba(255,255,255,0.9)] p-2">
-                    <table className="w-full text-left border-collapse">
-                      <thead>
-                        <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                          <th className="py-4 px-5">Motif du réglement</th>
-                          <th className="py-4 px-5">Date de payement</th>
-                          <th className="py-4 px-5 text-right">Somme perçue</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100/50 text-xs font-bold text-gray-700">
-                        {payouts.map(exp => (
-                          <tr key={exp.id} className="hover:bg-white/10 transition-all duration-200">
-                            <td className="py-4 px-5 flex items-center gap-3">
-                              <span className="px-3 py-1.5 bg-[#F4F7F6] shadow-[2px_2px_5px_rgba(225,29,72,0.06),-2px_-2px_5px_rgba(255,255,255,0.95)] text-rose-700 rounded-xl font-black text-[10px] uppercase border border-rose-100/10">Réglement direct</span>
-                              <span className="text-xs text-gray-600 font-bold ml-2">{exp.description || 'Paiement de commission commission promo'}</span>
-                            </td>
-                            <td className="py-3 px-4 text-gray-500 font-mono">
-                              {exp.date ? (
-                                exp.date?.toDate ? exp.date.toDate().toLocaleDateString('fr-FR') : new Date(exp.date).toLocaleDateString('fr-FR')
-                              ) : 'N/A'}
-                            </td>
-                            <td className="py-3 px-5 text-right text-rose-600 font-black font-mono">
-                              -{formatCurrency(Number(exp.amount) || 0, globalCurrency)}
-                            </td>
+                  {paidTrans.length === 0 ? (
+                    <div className="py-12 text-center text-xs text-gray-400 font-bold italic bg-[#F4F7F6] shadow-[inset_2px_2px_5px_rgba(165,180,252,0.08),inset_-2px_-2px_5px_rgba(255,255,255,0.95)] rounded-2xl">
+                      Aucun abonnement payant rattaché pour le moment.
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto rounded-2xl bg-[#F4F7F6] shadow-[inset_3px_3px_8px_rgba(165,180,252,0.06),inset_-3px_-3px_8px_rgba(255,255,255,0.95)] p-1 max-h-[450px] overflow-y-auto">
+                      <table className="w-full text-left border-collapse text-[11px]">
+                        <thead>
+                          <tr className="text-[9px] font-black text-gray-400 uppercase tracking-widest bg-indigo-50/10 sticky top-0 py-2">
+                            <th className="py-3 px-3">Affilié</th>
+                            <th className="py-3 px-3">Licence</th>
+                            <th className="py-3 px-3 text-right">Commission</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100/30 font-bold text-gray-700">
+                          {paidTrans
+                            .filter(t => {
+                              if (!searchTerm) return true;
+                              const term = searchTerm.toLowerCase();
+                              return t.userDisplayName?.toLowerCase().includes(term) || 
+                                     t.username?.toLowerCase().includes(term);
+                            })
+                            .map((t, idx) => {
+                              const filParams = licenseParamsList.find(p => p.id === t.licenseId);
+                              const activePct = filParams?.promoCommission ?? t.ratePromo ?? 10;
+                              return (
+                                <tr key={t.id || idx} className="hover:bg-white/10 transition-all duration-150">
+                                  <td className="py-3 px-3">
+                                    <div>
+                                      <p className="font-black text-gray-950 truncate max-w-[120px]">{t.userDisplayName || t.username}</p>
+                                      <p className="text-[9px] text-gray-400 font-mono">@{t.username}</p>
+                                    </div>
+                                  </td>
+                                  <td className="py-3 px-3">
+                                    <span className="bg-[#F4F7F6] shadow-[1px_1px_3px_rgba(165,180,252,0.06),-1px_-1px_3px_rgba(255,255,255,0.95)] px-2 py-1 rounded-lg text-[9px] text-indigo-750 font-black uppercase tracking-wider">{t.licenseName || t.licenseId || 'Standard'}</span>
+                                  </td>
+                                  <td className="py-3 px-3 text-right font-black text-emerald-700 font-mono">
+                                    {formatCurrency(t.commissionPromo, globalCurrency)}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+
+                {/* Section droite : Historique de vos Reversements (Reçus) */}
+                <div className="bg-[#F4F7F6] rounded-[32px] p-6 shadow-[8px_8px_24px_rgba(165,180,252,0.18),-8px_-8px_24px_rgba(255,255,255,0.95)] flex flex-col space-y-4">
+                  <div className="pb-2 border-b border-gray-100/50 space-y-1">
+                    <h3 className="text-base font-black text-gray-950 tracking-tight uppercase">Reversements Reçus</h3>
+                    <p className="text-[11px] text-gray-400 font-semibold">Suivi de vos versements effectués par l'administration.</p>
                   </div>
-                )}
+
+                  {payouts.length === 0 ? (
+                    <div className="py-12 text-center text-xs text-gray-400 font-bold italic bg-[#F4F7F6] shadow-[inset_2px_2px_5px_rgba(165,180,252,0.08),inset_-2px_-2px_5px_rgba(255,255,255,0.95)] rounded-2xl">
+                      Aucun reversement reçu pour le moment.
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto rounded-2xl bg-[#F4F7F6] shadow-[inset_3px_3px_8px_rgba(165,180,252,0.06),-3px_-3px_8px_rgba(255,255,255,0.95)] p-1 max-h-[450px] overflow-y-auto">
+                      <table className="w-full text-left border-collapse text-[11px]">
+                        <thead>
+                          <tr className="text-[9px] font-black text-gray-400 uppercase tracking-widest sticky top-0 py-2">
+                            <th className="py-3 px-3">Date</th>
+                            <th className="py-3 px-3">Description</th>
+                            <th className="py-3 px-3 text-right">Somme perçue</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100/30 font-bold text-gray-700">
+                          {payouts.map(exp => (
+                            <tr key={exp.id} className="hover:bg-white/10 transition-all duration-150">
+                              <td className="py-3 px-3 text-gray-500 font-mono">
+                                {exp.date ? (
+                                  exp.date?.toDate ? exp.date.toDate().toLocaleDateString('fr-FR') : new Date(exp.date).toLocaleDateString('fr-FR')
+                                ) : 'N/A'}
+                              </td>
+                              <td className="py-3 px-3 text-gray-600 truncate max-w-[150px]" title={exp.description || 'Paiement'}>
+                                {exp.description || 'Reversement direct commission'}
+                              </td>
+                              <td className="py-3 px-3 text-right text-rose-600 font-black font-mono">
+                                -{formatCurrency(Number(exp.amount) || 0, globalCurrency)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}

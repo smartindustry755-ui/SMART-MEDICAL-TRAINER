@@ -45,7 +45,6 @@ export default function Sidebar({ isOpen, onClose, isAdmin, onLogout, onRestartT
     if (user?.role === 'apporteur') {
       menuItems = [
         { id: 'partner_dashboard', path: '/partner/dashboard', title: 'Tableau de Bord', icon: <LayoutGrid className="w-5 h-5" />, color: 'text-gray-650' },
-        { id: 'partner_finances', path: '/partner/finances', title: 'Mes Finances', icon: <Coins className="w-5 h-5" />, color: 'text-emerald-600' },
         { id: 'partner_profile', path: '/partner/profile', title: 'Mon profil', icon: <Settings className="w-5 h-5" />, color: 'text-slate-600' }
       ];
     } else {
