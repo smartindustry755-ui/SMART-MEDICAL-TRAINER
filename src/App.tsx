@@ -985,16 +985,7 @@ export default function App() {
         </Routes>
       </main>
     </div>
-    {!isPWAInstalled && !isExamActive && (
-      <button
-        onClick={handleInstallClick}
-        className="fixed bottom-4 right-4 z-[95] bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full px-4 py-2.5 shadow-xl border border-blue-500/10 flex items-center justify-center gap-2 group text-xs font-black tracking-wide active:scale-95 transition-all animate-pulse"
-        style={{ animationDuration: '3s' }}
-      >
-        <Download className="w-4 h-4 text-white animate-bounce" style={{ animationDuration: '2s' }} />
-        <span>Installer l'app</span>
-      </button>
-    )}
+
     {/* Premium Toast Notification for fallback install instructions */}
     {installNotification && (
       <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-[250] w-[92%] sm:w-full sm:max-w-md bg-gray-900 border border-gray-800 text-white rounded-2xl px-4 py-3.5 shadow-2xl flex items-center gap-3 animate-in slide-in-from-bottom-5 fade-in duration-300">

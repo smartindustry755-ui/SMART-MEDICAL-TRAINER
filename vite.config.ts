@@ -16,7 +16,7 @@ export default defineConfig(({mode}) => {
         manifest: {
           id: '/',
           start_url: '/',
-          name: 'Smart Work Book',
+          name: 'Smart Tutor',
           short_name: 'SmartWorkBook',
           description: 'Plateforme d\'apprentissage intelligente pour la réussite de vos examens.',
           theme_color: '#2563eb',
