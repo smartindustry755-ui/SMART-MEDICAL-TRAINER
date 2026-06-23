@@ -732,7 +732,7 @@ export default function App() {
           <div className="text-center space-y-4">
             <div className="w-32 h-32 mx-auto mb-4 relative">
               <img 
-                src="/logo.jpg" 
+                src="/logo.svg" 
                 alt="Smart Tutor Logo" 
                 className="w-full h-full object-contain filter drop-shadow-[0_12px_24px_rgba(165,180,252,0.25)] rounded-2xl"
                 referrerPolicy="no-referrer"
@@ -885,7 +885,7 @@ export default function App() {
         <div className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-[100] w-[92%] sm:w-full sm:max-w-md bg-white/95 backdrop-blur-md rounded-[2rem] sm:rounded-3xl shadow-2xl border border-blue-100 p-4 sm:p-5 flex items-center justify-between gap-3 sm:gap-4 animate-in slide-in-from-bottom-10 duration-500">
           <div className="flex items-center gap-3 sm:gap-4 overflow-hidden">
             <div className="w-11 h-11 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200 shrink-0 overflow-hidden">
-              <img src="/logo.jpg" alt="Smart Tutor Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain rounded-md" referrerPolicy="no-referrer" />
+              <img src="/logo.svg" alt="Smart Tutor Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain rounded-md" referrerPolicy="no-referrer" />
             </div>
             <div className="min-w-0">
               <p className="font-black text-gray-900 text-base sm:text-lg leading-tight truncate">Smart Tutor</p>

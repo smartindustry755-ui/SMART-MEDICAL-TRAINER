@@ -12,8 +12,10 @@ export default defineConfig(({mode}) => {
       tailwindcss(),
       VitePWA({
         registerType: 'prompt',
-        includeAssets: ['logo.jpg'],
+        includeAssets: ['logo.svg'],
         manifest: {
+          id: '/',
+          start_url: '/',
           name: 'Smart Work Book',
           short_name: 'SmartWorkBook',
           description: 'Plateforme d\'apprentissage intelligente pour la réussite de vos examens.',
@@ -22,22 +24,25 @@ export default defineConfig(({mode}) => {
           display: 'standalone',
           icons: [
             {
-              src: 'logo.jpg',
+              src: 'logo.svg',
               sizes: '192x192',
-              type: 'image/jpeg'
+              type: 'image/svg+xml',
+              purpose: 'any'
             },
             {
-              src: 'logo.jpg',
+              src: 'logo.svg',
               sizes: '512x512',
-              type: 'image/jpeg'
+              type: 'image/svg+xml',
+              purpose: 'any'
             },
             {
-              src: 'logo.jpg',
+              src: 'logo.svg',
               sizes: '512x512',
-              type: 'image/jpeg',
-              purpose: 'any maskable'
+              type: 'image/svg+xml',
+              purpose: 'maskable'
             }
           ]
+          
         },
         workbox: {
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,

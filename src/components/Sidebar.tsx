@@ -134,7 +134,7 @@ export default function Sidebar({ isOpen, onClose, isAdmin, onLogout, onRestartT
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 relative">
               <img 
-                src="/logo.jpg" 
+                src="/logo.svg" 
                 alt="Smart Tutor Logo" 
                 className="w-full h-full object-contain filter drop-shadow-[0_4px_8px_rgba(165,180,252,0.15)] rounded-lg"
                 referrerPolicy="no-referrer"

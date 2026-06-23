@@ -5125,7 +5125,7 @@ export default function UserInterface({ user, isSidebarOpen, setIsSidebarOpen, i
             className="w-24 h-24 mx-auto mb-4 relative"
           >
             <img 
-              src="/logo.jpg" 
+              src="/logo.svg" 
               alt="Smart Tutor Logo" 
               className="w-full h-full object-contain filter drop-shadow-[0_8px_16px_rgba(165,180,252,0.15)] rounded-2xl"
               referrerPolicy="no-referrer"

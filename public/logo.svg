@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e40af" />
+      <stop offset="50%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+    
+    <!-- Emblem Glow/Gradient -->
+    <linearGradient id="goldGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="60%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#fb7185" />
+    </linearGradient>
+
+    <!-- White Soft Glow -->
+    <linearGradient id="whiteGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Card / Base (Rounded, with plenty of safe padding for maskable) -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)" />
+
+  <!-- Inner glowing decorative orbital lines -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="#60a5fa" stroke-width="2" stroke-dasharray="12 8" opacity="0.4" />
+  <circle cx="256" cy="256" r="210" fill="none" stroke="#93c5fd" stroke-width="1" opacity="0.2" />
+
+  <!-- The Emblem (Centered safely inside the 307px maskable zone) -->
+  <g transform="translate(128, 128) scale(0.5)">
+    <!-- Scale factor 0.5 allows the 512px SVG content to fit snug inside PWA safe zone -->
+    
+    <!-- Main Book base -->
+    <path d="M64 360 C 120 320, 200 320, 256 360 C 312 320, 392 320, 448 360 L 448 80 C 392 40, 312 40, 256 80 C 200 40, 120 40, 64 80 Z" 
+          fill="url(#whiteGrad)" 
+          filter="drop-shadow(0 12px 24px rgba(0,0,0,0.15))" />
+
+    <!-- Pages details/lines -->
+    <path d="M 94 110 C 140 85, 200 85, 236 115" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round" opacity="0.6" />
+    <path d="M 94 160 C 140 135, 200 135, 236 165" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round" opacity="0.6" />
+    <path d="M 94 210 C 140 185, 200 185, 236 215" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round" opacity="0.6" />
+    <path d="M 94 260 C 140 235, 200 235, 236 265" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round" opacity="0.6" />
+
+    <path d="M 418 110 C 372 85, 312 85, 276 115" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round" opacity="0.6" />
+    <path d="M 418 160 C 372 135, 312 135, 276 165" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round" opacity="0.6" />
+    <path d="M 418 210 C 372 185, 312 185, 276 215" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round" opacity="0.6" />
+    <path d="M 418 260 C 372 235, 312 235, 276 265" fill="none" stroke="#94a3b8" stroke-width="4" stroke-linecap="round" opacity="0.6" />
+
+    <!-- Book Spine Divider -->
+    <path d="M 256 80 L 256 360" fill="none" stroke="#cbd5e1" stroke-width="6" stroke-linecap="round" />
+
+    <!-- Graduation Cap (Floating elegantly above the book) -->
+    <g transform="translate(0, -60)">
+      <!-- Diamond Top -->
+      <polygon points="256,40 396,100 256,160 116,100" fill="url(#goldGrad)" filter="drop-shadow(0 10px 20px rgba(0,0,0,0.25))" />
+      
+      <!-- Cap Base / Skull -->
+      <path d="M176 114 L176 160 C176 200, 336 200, 336 160 L336 114" fill="#d97706" opacity="0.9" />
+      
+      <!-- Tassel -->
+      <path d="M256 100 L350 140 L350 200" fill="none" stroke="#fef08a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+      <circle cx="350" cy="205" r="8" fill="#fef08a" />
+    </g>
+
+    <!-- Star rating / shine details for "Smart success" -->
+    <path d="M 256 30 C 256 30, 256 5, 271 0 C 256 5, 256 30, 256 30 Z" fill="#fef08a" transform="translate(120, 280) scale(0.6)" />
+    <path d="M 256 30 C 256 30, 256 5, 271 0 C 256 5, 256 30, 256 30 Z" fill="#fef08a" transform="translate(360, 280) scale(0.6)" />
+    <path d="M 256 30 C 256 30, 256 5, 271 0 C 256 5, 256 30, 256 30 Z" fill="#fef08a" transform="translate(240, 390) scale(0.8)" />
+  </g>
+</svg>
