@@ -45,7 +45,8 @@ export const PARTNER_FILIERES = [
   { id: 'sage_femme', name: 'Sage-femme' },
   { id: 'kinetherapie', name: 'Kinésithérapie' },
   { id: 'pharmacie', name: 'Pharmacie' },
-  { id: 'EM', name: 'Études Médicales (EM)' }
+  { id: 'EM', name: 'Études Médicales (EM)' },
+  { id: 'TIM', name: 'TIM (Imagerie Médicale)' }
 ];
 
 export default function PartnerInterface({ onLogout, setIsSidebarOpen, onEnterStudentSpace }: PartnerInterfaceProps) {

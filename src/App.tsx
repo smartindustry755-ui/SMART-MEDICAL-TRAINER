@@ -46,8 +46,15 @@ export default function App() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isPWAInstalled, setIsPWAInstalled] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
+    }
+    return false;
+  });
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
+  const [showInstallInstructions, setShowInstallInstructions] = useState(false);
   const [showFiliereSelection, setShowFiliereSelection] = useState(false);
   const [showDemoFiliereSelection, setShowDemoFiliereSelection] = useState(false);
   const [tempSelection, setTempSelection] = useState({ filiere: '', niveau: '' });
@@ -221,9 +228,15 @@ export default function App() {
       }
     }
 
+    const handleAppInstalled = () => {
+      setIsPWAInstalled(true);
+      setShowInstallBanner(false);
+    };
+
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
 
     // Handle visibility changes for iOS/Safari suspend network issues cleanly
     let networkActionPromise: Promise<void> | null = null;
@@ -257,22 +270,33 @@ export default function App() {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 
   const handleInstallClick = async () => {
     if (isIOS) {
-      alert("Pour installer l'application sur iOS : appuyez sur le bouton 'Partager' en bas de votre écran, puis sur 'Sur l'écran d'accueil'.");
+      setShowInstallInstructions(true);
       setShowInstallBanner(false);
       return;
     }
 
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      console.log('User accepted the install prompt');
+    if (!deferredPrompt) {
+      setShowInstallInstructions(true);
+      setShowInstallBanner(false);
+      return;
+    }
+
+    try {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        console.log('User accepted the install prompt');
+      }
+    } catch (err) {
+      console.warn("Could not prompt installation automatically:", err);
+      setShowInstallInstructions(true);
     }
     setDeferredPrompt(null);
     setShowInstallBanner(false);
@@ -282,6 +306,68 @@ export default function App() {
     setShowInstallBanner(false);
     // Optional: persist dismissal for 24h or per session
     // localStorage.setItem('pwa_install_dismissed', 'true');
+  };
+
+  const renderInstallInstructionsModal = () => {
+    if (!showInstallInstructions) return null;
+    return (
+      <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+        <div className="bg-white rounded-[2.5rem] w-full max-w-md p-6 sm:p-8 space-y-6 shadow-2xl border border-gray-100 animate-in zoom-in-95 duration-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center animate-pulse">
+                <Download className="w-5 h-5 text-blue-650" />
+              </div>
+              <div>
+                <h3 className="font-black text-gray-950 text-lg leading-tight">Installer Smart Tutor</h3>
+                <p className="text-[10px] text-gray-400 font-mono tracking-wider font-semibold uppercase">PWA (Application Web)</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => setShowInstallInstructions(false)}
+              className="p-1.5 text-gray-400 hover:text-gray-650 hover:bg-gray-100 rounded-xl transition-all"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            <div className="bg-gradient-to-br from-indigo-50/50 to-blue-50/50 p-4 rounded-3xl border border-blue-50/50 space-y-2">
+              <p className="text-xs text-gray-650 leading-relaxed font-semibold">
+                L'installation de l'application ajoute une icône sur votre écran d'accueil avec une fluidité maximale, un mode immersif et un accès direct pour vos révisions.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="border-l-4 border-blue-500 pl-4 py-1 space-y-1">
+                <h4 className="text-xs font-black text-gray-900 uppercase tracking-wide">Sur Android (Chrome)</h4>
+                <p className="text-xs text-gray-500 leading-relaxed font-semibold">
+                  1. Cliquez sur les <span className="font-black text-gray-800">trois points verticaux ⋮</span> en haut à droite de Google Chrome.<br />
+                  2. Sélectionnez <span className="font-black text-indigo-600">"Installer l'application"</span> ou <span className="font-black text-indigo-600">"Ajouter à l'écran d'accueil"</span>.<br />
+                  3. Confirmez pour lancer l'installation !
+                </p>
+              </div>
+
+              <div className="border-l-4 border-indigo-500 pl-4 py-1 space-y-1">
+                <h4 className="text-xs font-black text-gray-900 uppercase tracking-wide">Sur iOS (iPhone & iPad)</h4>
+                <p className="text-xs text-gray-500 leading-relaxed font-semibold">
+                  1. Cliquez sur l'icône <span className="font-black text-gray-800">Partager 📤</span> en bas de votre écran.<br />
+                  2. Sélectionnez <span className="font-black text-indigo-600">"Sur l'écran d'accueil" ➕</span>.<br />
+                  3. Cliquez sur <span className="font-black text-indigo-600">"Ajouter"</span> en haut à droite.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowInstallInstructions(false)}
+              className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-black hover:from-blue-700 hover:to-indigo-700 transition-all shadow-lg shadow-blue-100 uppercase tracking-wider text-sm active:scale-95 text-center block"
+            >
+              Compris, j'installe !
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -450,8 +536,11 @@ export default function App() {
 
   const renderDemoFiliereSelection = () => {
     const demoOptions = [
-      { id: 'ECN', name: 'ECN', level: 'ALL' },
-      { id: 'EM', name: 'EM niveau 5', level: 'Niveau 5' }
+      { id: 'IDE1', name: 'IDE 1', filiere: 'IDE', level: 'Niveau 1' },
+      { id: 'IDE2', name: 'IDE 2', filiere: 'IDE', level: 'Niveau 2' },
+      { id: 'IDE3', name: 'IDE 3', filiere: 'IDE', level: 'Niveau 3' },
+      { id: 'TIM1', name: 'TIM 1', filiere: 'TIM', level: 'Niveau 1' },
+      { id: 'TIM2', name: 'TIM 2', filiere: 'TIM', level: 'Niveau 2' }
     ];
 
     return (
@@ -470,7 +559,7 @@ export default function App() {
               {demoOptions.map(opt => (
                 <button
                   key={opt.id}
-                  onClick={() => handleDemoAccess(opt.id, opt.level)}
+                  onClick={() => handleDemoAccess(opt.filiere, opt.level)}
                   className="w-full p-5 bg-gray-50 hover:bg-blue-50 border-2 border-transparent hover:border-blue-100 rounded-2xl text-left transition-all group flex items-center justify-between"
                 >
                   <div className="flex flex-col">
@@ -606,7 +695,8 @@ export default function App() {
 
   if (!currentUser) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[100dvh] bg-gray-50 bg-dots p-4 transition-opacity duration-500">
+      <>
+        <div className="flex flex-col items-center justify-center min-h-[100dvh] bg-gray-50 bg-dots p-4 transition-opacity duration-500">
         {showDemoFiliereSelection && renderDemoFiliereSelection()}
         <div className="w-full max-w-md space-y-8">
           <div className="text-center space-y-4">
@@ -661,7 +751,6 @@ export default function App() {
               <div className="space-y-1.5">
                 <div className="flex flex-col ml-1">
                   <label className="text-sm font-bold text-gray-700">Code Promo (Optionnel)</label>
-                  <span className="text-[10px] text-indigo-500 font-bold italic">Obtenez 3 mois supplémentaires de bonus</span>
                 </div>
                 <div className="relative">
                   <Star className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -699,6 +788,15 @@ export default function App() {
                   <Play className="w-5 h-5" />
                   Tester gratuitement
                 </button>
+
+                <button
+                  type="button"
+                  onClick={handleInstallClick}
+                  className="w-full py-4 bg-gradient-to-r from-indigo-50 to-blue-50 text-indigo-700 border border-indigo-100 rounded-2xl font-black hover:from-indigo-100 hover:to-blue-100 transition-all flex items-center justify-center gap-2 text-base shadow-sm active:scale-95"
+                >
+                  <Download className="w-5 h-5 animate-bounce text-indigo-650" />
+                  Installer l'application (PWA)
+                </button>
               </div>
             </form>
           </div>
@@ -721,6 +819,18 @@ export default function App() {
           </div>
         </div>
       </div>
+      {!isPWAInstalled && (
+        <button
+          onClick={handleInstallClick}
+          className="fixed bottom-4 right-4 z-[95] bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full px-4 py-2.5 shadow-xl border border-blue-500/10 flex items-center justify-center gap-2 group text-xs font-black tracking-wide active:scale-95 transition-all animate-pulse"
+          style={{ animationDuration: '3s' }}
+        >
+          <Download className="w-4 h-4 text-white animate-bounce" style={{ animationDuration: '2s' }} />
+          <span>Installer l'app</span>
+        </button>
+      )}
+      {renderInstallInstructionsModal()}
+      </>
     );
   }
 
@@ -729,7 +839,8 @@ export default function App() {
   }
 
   return (
-    <div className="flex min-h-[100dvh] bg-gray-50 bg-dots flex-col md:flex-row overflow-y-auto items-stretch justify-start m-0 p-0">
+    <>
+      <div className="flex min-h-[100dvh] bg-gray-50 bg-dots flex-col md:flex-row overflow-y-auto items-stretch justify-start m-0 p-0">
       {showDemoFiliereSelection && renderDemoFiliereSelection()}
       {/* Offline Banner */}
       {isOffline && (
@@ -775,6 +886,7 @@ export default function App() {
           onClose={() => setIsSidebarOpen(false)} 
           isAdmin={isAdmin}
           onLogout={handleLogout}
+          onInstall={handleInstallClick}
           onSwitchToPartnerSpace={(currentUser?.role === 'partner' || currentUser?.role === 'apporteur') ? () => {
             setPartnerWorkspaceMode('partner');
             safeLocalStorage.setItem('ais_partner_mode', 'partner');
@@ -843,5 +955,17 @@ export default function App() {
         </Routes>
       </main>
     </div>
+    {!isPWAInstalled && !isExamActive && (
+      <button
+        onClick={handleInstallClick}
+        className="fixed bottom-4 right-4 z-[95] bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full px-4 py-2.5 shadow-xl border border-blue-500/10 flex items-center justify-center gap-2 group text-xs font-black tracking-wide active:scale-95 transition-all animate-pulse"
+        style={{ animationDuration: '3s' }}
+      >
+        <Download className="w-4 h-4 text-white animate-bounce" style={{ animationDuration: '2s' }} />
+        <span>Installer l'app</span>
+      </button>
+    )}
+    {renderInstallInstructionsModal()}
+    </>
   );
 }

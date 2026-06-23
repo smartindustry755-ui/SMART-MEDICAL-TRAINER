@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { LayoutGrid, Book, TrendingUp, Target, Calendar, Award, X, Settings, GraduationCap, HelpCircle, FileText, Coins, ShieldAlert } from 'lucide-react';
+import { LayoutGrid, Book, TrendingUp, Target, Calendar, Award, X, Settings, GraduationCap, HelpCircle, FileText, Coins, ShieldAlert, Download } from 'lucide-react';
 import { cn, safeLocalStorage } from '../lib/utils';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { db, handleFirestoreError, OperationType, onSnapshot } from '../lib/firebase';
@@ -13,9 +13,10 @@ interface SidebarProps {
   onLogout?: () => void;
   onRestartTutorial?: () => void;
   onSwitchToPartnerSpace?: () => void;
+  onInstall?: () => void;
 }
 
-export default function Sidebar({ isOpen, onClose, isAdmin, onLogout, onRestartTutorial, onSwitchToPartnerSpace }: SidebarProps) {
+export default function Sidebar({ isOpen, onClose, isAdmin, onLogout, onRestartTutorial, onSwitchToPartnerSpace, onInstall }: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   
@@ -184,6 +185,15 @@ export default function Sidebar({ isOpen, onClose, isAdmin, onLogout, onRestartT
 
         <div className="p-6 border-t border-gray-50 bg-gray-50/50 min-w-[280px]">
           <div className="flex flex-col gap-3">
+            {onInstall && (
+              <button 
+                onClick={onInstall}
+                className="w-full flex items-center justify-center gap-2 py-2.5 text-xs font-black text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-xl transition-all shadow-[0_4px_12px_rgba(37,99,235,0.2)] active:scale-95"
+              >
+                <Download className="w-4 h-4 animate-bounce" />
+                Installer l'application
+              </button>
+            )}
             {user?.role !== 'partner' && onRestartTutorial && (
               <button 
                 onClick={onRestartTutorial}

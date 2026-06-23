@@ -55,6 +55,7 @@ export const DEFAULT_LICENSE_PARAMS: Record<string, Omit<LicenseParams, 'id'>> =
   ECN: { name: 'ECN (Médecine)', price3m: 30, price6m: 50, price12m: 80, promoCommission: 10, partnerCommission: 15, status: 'active' },
   IDE: { name: 'IDE (Infirmier)', price3m: 25, price6m: 40, price12m: 70, promoCommission: 12, partnerCommission: 15, status: 'active' },
   EM: { name: 'EM (Études Médicales)', price3m: 35, price6m: 60, price12m: 90, promoCommission: 10, partnerCommission: 15, status: 'active' },
+  TIM: { name: 'TIM (Imagerie Médicale)', price3m: 25, price6m: 40, price12m: 70, promoCommission: 10, partnerCommission: 15, status: 'active' },
   SF: { name: 'Sage-femme', price3m: 25, price6m: 40, price12m: 70, promoCommission: 10, partnerCommission: 15, status: 'active' },
   KINE: { name: 'Kinésithérapie', price3m: 28, price6m: 45, price12m: 75, promoCommission: 10, partnerCommission: 15, status: 'active' },
   PHARMA: { name: 'Pharmacie', price3m: 30, price6m: 50, price12m: 80, promoCommission: 10, partnerCommission: 15, status: 'active' },

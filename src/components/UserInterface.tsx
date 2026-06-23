@@ -2045,9 +2045,26 @@ export default function UserInterface({ user, isSidebarOpen, setIsSidebarOpen, i
                             setRevisionSelection(prev => ({ ...prev, books: newBooks, chapters: [], blocks: [] }));
                           }}
                         />
-                        <div className="flex items-center justify-between flex-1">
-                          <span className="text-sm font-semibold text-gray-700">{book.name}</span>
-                          {!accessible && <Lock className="w-3 h-3 text-gray-400" />}
+                        <div className="flex flex-col flex-1 gap-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-semibold text-gray-700">{book.name}</span>
+                            {!accessible && <Lock className="w-3 h-3 text-gray-400" />}
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            <span className={cn(
+                              "inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider border",
+                              book.filiere === 'IDE' ? "bg-blue-50 text-blue-700 border-blue-100" :
+                              book.filiere === 'TIM' ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                              book.filiere === 'ECN' ? "bg-purple-50 text-purple-700 border-purple-100" :
+                              book.filiere === 'EM' ? "bg-amber-50 text-amber-700 border-amber-100" :
+                              "bg-gray-50 text-gray-700 border-gray-100"
+                            )}>
+                              {FILIERE_OPTIONS.find(f => f.id === book.filiere)?.name || book.filiere || 'ECN'}
+                            </span>
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-gray-50 text-gray-500 border border-gray-100">
+                              {book.niveau === 'ALL' ? 'Tous niveaux' : (book.niveau || 'Général')}
+                            </span>
+                          </div>
                         </div>
                       </label>
                     );
@@ -2497,8 +2514,23 @@ export default function UserInterface({ user, isSidebarOpen, setIsSidebarOpen, i
                             }
                           }}
                         />
-                        <div>
-                          <p className="font-bold text-gray-900">{book.name}</p>
+                        <div className="flex flex-col gap-1 flex-1">
+                          <p className="font-bold text-gray-900 leading-tight">{book.name}</p>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            <span className={cn(
+                              "inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider border",
+                              book.filiere === 'IDE' ? "bg-blue-50 text-blue-700 border-blue-100" :
+                              book.filiere === 'TIM' ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                              book.filiere === 'ECN' ? "bg-purple-50 text-purple-700 border-purple-100" :
+                              book.filiere === 'EM' ? "bg-amber-50 text-amber-700 border-amber-100" :
+                              "bg-gray-50 text-gray-700 border-gray-100"
+                            )}>
+                              {FILIERE_OPTIONS.find(f => f.id === book.filiere)?.name || book.filiere || 'ECN'}
+                            </span>
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-gray-50 text-gray-500 border border-gray-100">
+                              {book.niveau === 'ALL' ? 'Tous niveaux' : (book.niveau || 'Général')}
+                            </span>
+                          </div>
                         </div>
                       </label>
                     );
@@ -2736,8 +2768,23 @@ export default function UserInterface({ user, isSidebarOpen, setIsSidebarOpen, i
                   )}
                 </div>
                 
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <h3 className="text-xl font-display font-bold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">{book.name}</h3>
+                  <div className="flex flex-wrap gap-1.5">
+                    <span className={cn(
+                      "inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border",
+                      book.filiere === 'IDE' ? "bg-blue-50 text-blue-700 border-blue-100" :
+                      book.filiere === 'TIM' ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                      book.filiere === 'ECN' ? "bg-purple-50 text-purple-700 border-purple-100" :
+                      book.filiere === 'EM' ? "bg-amber-50 text-amber-700 border-amber-100" :
+                      "bg-gray-50 text-gray-700 border-gray-100"
+                    )}>
+                      {FILIERE_OPTIONS.find(f => f.id === book.filiere)?.name || book.filiere || 'ECN'}
+                    </span>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider bg-gray-50 text-gray-500 border border-gray-100">
+                      {book.niveau === 'ALL' ? 'Tous niveaux' : (book.niveau || 'Général')}
+                    </span>
+                  </div>
                   <p className="text-sm text-gray-500 font-medium flex items-center gap-1">
                     {accessible ? (
                       <>Ouvrir la collection <ChevronRight className="w-4 h-4" /></>
@@ -4477,7 +4524,24 @@ export default function UserInterface({ user, isSidebarOpen, setIsSidebarOpen, i
                                 <div className={cn("p-2 rounded-lg transition-colors", bgClass, textClass, "group-hover:bg-opacity-80")}>
                                   <Book className="w-5 h-5" />
                                 </div>
-                                <h4 className="font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">{book.name}</h4>
+                                <div className="flex flex-col">
+                                  <h4 className="font-bold text-gray-900 group-hover:text-indigo-600 transition-colors leading-tight">{book.name}</h4>
+                                  <div className="flex flex-wrap gap-1 mt-1">
+                                    <span className={cn(
+                                      "inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider border",
+                                      book.filiere === 'IDE' ? "bg-blue-50 text-blue-700 border-blue-100" :
+                                      book.filiere === 'TIM' ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                                      book.filiere === 'ECN' ? "bg-purple-50 text-purple-700 border-purple-100" :
+                                      book.filiere === 'EM' ? "bg-amber-50 text-amber-700 border-amber-100" :
+                                      "bg-gray-50 text-gray-700 border-gray-100"
+                                    )}>
+                                      {FILIERE_OPTIONS.find(f => f.id === book.filiere)?.name || book.filiere || 'ECN'}
+                                    </span>
+                                    <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-gray-50 text-gray-500 border border-gray-100">
+                                      {book.niveau === 'ALL' ? 'Tous niveaux' : (book.niveau || 'Général')}
+                                    </span>
+                                  </div>
+                                </div>
                               </div>
                               <div className="flex flex-col items-end">
                                 <span className={cn("font-black text-lg", textClass)}>{percent}%</span>
@@ -5654,9 +5718,24 @@ export default function UserInterface({ user, isSidebarOpen, setIsSidebarOpen, i
                           }
                         }}
                       />
-                      <div>
-                        <p className="font-bold text-gray-900">{book.name}</p>
-                      </div>
+                        <div className="flex flex-col gap-1 flex-1">
+                          <p className="font-bold text-gray-900 leading-tight">{book.name}</p>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            <span className={cn(
+                              "inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider border",
+                              book.filiere === 'IDE' ? "bg-blue-50 text-blue-700 border-blue-100" :
+                              book.filiere === 'TIM' ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
+                              book.filiere === 'ECN' ? "bg-purple-50 text-purple-700 border-purple-100" :
+                              book.filiere === 'EM' ? "bg-amber-50 text-amber-700 border-amber-100" :
+                              "bg-gray-50 text-gray-700 border-gray-100"
+                            )}>
+                              {FILIERE_OPTIONS.find(f => f.id === book.filiere)?.name || book.filiere || 'ECN'}
+                            </span>
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-gray-50 text-gray-500 border border-gray-100">
+                              {book.niveau === 'ALL' ? 'Tous niveaux' : (book.niveau || 'Général')}
+                            </span>
+                          </div>
+                        </div>
                     </label>
                   ))}
                 </div>

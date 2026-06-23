@@ -19,6 +19,7 @@ export const PARTNER_FILIERES = [
   { id: 'ECN', name: 'Médecine (ECN)' },
   { id: 'IDE', name: 'IDE (Infirmier)' },
   { id: 'EM', name: 'Études Médicales (EM)' },
+  { id: 'TIM', name: 'TIM (Imagerie Médicale)' },
   { id: 'SF', name: 'Sage-femme' },
   { id: 'KINE', name: 'Kinésithérapie' },
   { id: 'PHARMA', name: 'Pharmacie' },
