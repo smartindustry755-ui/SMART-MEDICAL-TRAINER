@@ -1,0 +1,8 @@
+{
+  "name": "Smart Tutor",
+  "description": "Plateforme d'apprentissage intelligente et interactive Smart Tutor, préparation moderne aux examens médicaux avec interface interactive d'entraînement.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

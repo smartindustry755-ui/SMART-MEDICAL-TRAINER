@@ -1,0 +1,401 @@
+{
+  "entities": {
+    "Book": {
+      "title": "Book",
+      "description": "A medical question bank book",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["lange", "pretest"] }
+      },
+      "required": ["name", "type"]
+    },
+    "Chapter": {
+      "title": "Chapter",
+      "description": "A chapter within a book",
+      "type": "object",
+      "properties": {
+        "bookId": { "type": "string" },
+        "title": { "type": "string" }
+      },
+      "required": ["bookId", "title"]
+    },
+    "Block": {
+      "title": "Block",
+      "description": "A block of questions imported at once",
+      "type": "object",
+      "properties": {
+        "bookId": { "type": "string" },
+        "chapterId": { "type": "string" },
+        "title": { "type": "string" },
+        "rawQuestions": { "type": "string" },
+        "rawAnswers": { "type": "string" },
+        "importDate": { "type": "string", "format": "date-time" }
+      },
+      "required": ["bookId", "chapterId", "title", "importDate"]
+    },
+    "Question": {
+      "title": "Question",
+      "description": "An individual question",
+      "type": "object",
+      "properties": {
+        "blockId": { "type": "string" },
+        "chapterId": { "type": "string" },
+        "number": { "type": "number" },
+        "text": { "type": "string" },
+        "options": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "letter": { "type": "string" },
+              "text": { "type": "string" }
+            }
+          }
+        },
+        "imageUrls": { "type": "array", "items": { "type": "string" } },
+        "sharedStem": { "type": "string" },
+        "isGrouped": { "type": "boolean" },
+        "groupTitle": { "type": "string" }
+      },
+      "required": ["blockId", "chapterId", "number", "text", "options"]
+    },
+    "Answer": {
+      "title": "Answer",
+      "description": "The correct answer and explanation for a question",
+      "type": "object",
+      "properties": {
+        "questionId": { "type": "string" },
+        "correctLetter": { "type": "string" },
+        "explanation": { "type": "string" },
+        "imageUrls": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["questionId", "correctLetter", "explanation"]
+    },
+    "UserProgress": {
+      "title": "UserProgress",
+      "description": "User's progress, XP, streak, and badges",
+      "type": "object",
+      "properties": {
+        "xp": { "type": "number" },
+        "level": { "type": "number" },
+        "totalQuestions": { "type": "number" },
+        "answeredQuestions": { "type": "number" },
+        "correctAnswers": { "type": "number" },
+        "incorrectAnswers": { "type": "number" },
+        "accuracy": { "type": "number" },
+        "currentStreak": { "type": "number" },
+        "lastActiveDate": { "type": "string", "format": "date" },
+        "badges": { "type": "array", "items": { "type": "string" } },
+        "byBook": { "type": "object" },
+        "byChapter": { "type": "object" },
+        "byBlock": { "type": "object" }
+      },
+      "required": ["xp", "level", "answeredQuestions", "correctAnswers", "incorrectAnswers", "accuracy", "currentStreak", "badges"]
+    },
+    "UserPlanning": {
+      "title": "UserPlanning",
+      "description": "User's study plan and daily targets",
+      "type": "object",
+      "properties": {
+        "endDate": { "type": "string", "format": "date" },
+        "selectedBooks": { "type": "array", "items": { "type": "string" } },
+        "selectedChapters": { "type": "array", "items": { "type": "string" } },
+        "frequencyDaysPerWeek": { "type": "number" },
+        "totalQuestionsToTreat": { "type": "number" },
+        "dailyTarget": { "type": "number" }
+      },
+      "required": ["endDate", "selectedBooks", "selectedChapters", "frequencyDaysPerWeek", "totalQuestionsToTreat", "dailyTarget"]
+    },
+    "DailyProgress": {
+      "title": "DailyProgress",
+      "description": "User's daily progress tracking",
+      "type": "object",
+      "properties": {
+        "done": { "type": "number" },
+        "target": { "type": "number" }
+      },
+      "required": ["done", "target"]
+    },
+    "StudyPlan": {
+      "title": "StudyPlan",
+      "description": "User's active study plan",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "startDate": { "type": "string", "format": "date" },
+        "endDate": { "type": "string", "format": "date" },
+        "totalQuestions": { "type": "number" },
+        "dailyTarget": { "type": "number" },
+        "blocks": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string", "enum": ["active", "completed", "cancelled"] },
+        "progress": { "type": "object" },
+        "days": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": { "type": "string", "format": "date" },
+              "target": { "type": "number" },
+              "blocks": { "type": "array", "items": { "type": "string" } },
+              "status": { "type": "string", "enum": ["pending", "active", "missed", "locked", "completed"] },
+              "done": { "type": "number" }
+            }
+          }
+        }
+      },
+      "required": ["userId", "startDate", "endDate", "totalQuestions", "dailyTarget", "blocks", "status", "progress", "days"]
+    },
+    "UserError": {
+      "title": "UserError",
+      "description": "A question that the user answered incorrectly",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "questionId": { "type": "string" },
+        "chapterId": { "type": "string" },
+        "blockId": { "type": "string" },
+        "selectedAnswer": { "type": "string" },
+        "correctAnswer": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "questionId", "selectedAnswer", "correctAnswer", "timestamp"]
+    },
+    "Exam": {
+      "title": "Exam",
+      "description": "A scheduled mock exam",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "startTime": { "type": "string", "format": "date-time" },
+        "durationMinutes": { "type": "number" },
+        "questionIds": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "startTime", "durationMinutes", "questionIds"]
+    },
+    "ExamAttempt": {
+      "title": "ExamAttempt",
+      "description": "A user's attempt at a mock exam",
+      "type": "object",
+      "properties": {
+        "examId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "score": { "type": "number" },
+        "totalQuestions": { "type": "number" },
+        "answers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "submittedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["examId", "userId", "score", "totalQuestions", "answers"]
+    },
+    "User": {
+      "title": "User",
+      "description": "User profile and role information",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "student"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "onboardingCompleted": { "type": "boolean" },
+        "tutorialStepsCompleted": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["username", "password", "role"]
+    },
+    "AppStats": {
+      "title": "AppStats",
+      "description": "Global application statistics",
+      "type": "object",
+      "properties": {
+        "testClicks": { "type": "number" },
+        "totalUsers": { "type": "number" },
+        "lastUpdated": { "type": "string", "format": "date-time" }
+      },
+      "required": ["testClicks"]
+    },
+    "SerieQ": {
+      "title": "SerieQ",
+      "description": "Special revision content (video + summary sheet)",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "videoUrl": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "filiere": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "videoUrl", "imageUrl", "filiere"]
+    },
+    "ConnectionLog": {
+      "title": "ConnectionLog",
+      "description": "A log of a user's connection to the platform",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "username": { "type": "string" },
+        "displayName": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "filiere": { "type": "string" },
+        "niveau": { "type": "string" }
+      },
+      "required": ["userId", "username", "displayName", "timestamp"]
+    },
+    "FinancialHistory": {
+      "title": "FinancialHistory",
+      "description": "Financial transaction history of license sales and partner commissions",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string", "format": "date-time" },
+        "userId": { "type": "string" },
+        "username": { "type": "string" },
+        "licenseId": { "type": "string" },
+        "amountPaid": { "type": "number" },
+        "promoCode": { "type": "string" },
+        "commissionPromo": { "type": "number" },
+        "commissionPartner": { "type": "number" },
+        "amountSmartWorkBook": { "type": "number" },
+        "partnerId": { "type": "string" },
+        "status": { "type": "string", "enum": ["paid", "refunded"] }
+      },
+      "required": ["date", "userId", "username", "licenseId", "amountPaid", "commissionPromo", "commissionPartner", "amountSmartWorkBook"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "description": "An authorized expense deducted from the current platform turnover and relevant accounts",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string", "format": "date-time" },
+        "amount": { "type": "number" },
+        "motif": { "type": "string", "enum": ["payement partenaire", "payement commission code promo", "payement hebergement cloud", "autre"] },
+        "description": { "type": "string" },
+        "partnerId": { "type": "string" },
+        "authorizedBy": { "type": "string" },
+        "status": { "type": "string", "enum": ["verified", "pending"] }
+      },
+      "required": ["date", "amount", "motif", "description", "authorizedBy", "status"]
+    },
+    "LicenseParams": {
+      "title": "LicenseParams",
+      "description": "Configurable pricing and commission percentages for each license type",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "price3m": { "type": "number" },
+        "price6m": { "type": "number" },
+        "price12m": { "type": "number" },
+        "promoCommission": { "type": "number" },
+        "partnerCommission": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "inactive"] }
+      },
+      "required": ["name", "price3m", "price6m", "price12m", "promoCommission", "partnerCommission", "status"]
+    },
+    "UserConsumption": {
+      "title": "UserConsumption",
+      "description": "Daily and monthly database reads/writes and transfer sizes of users",
+      "type": "object",
+      "properties": {
+        "readsToday": { "type": "number" },
+        "writesToday": { "type": "number" },
+        "readsMonth": { "type": "number" },
+        "writesMonth": { "type": "number" },
+        "readBytesToday": { "type": "number" },
+        "writeBytesToday": { "type": "number" },
+        "readBytesMonth": { "type": "number" },
+        "writeBytesMonth": { "type": "number" },
+        "lastActiveToday": { "type": "string" },
+        "lastActiveMonth": { "type": "string" }
+      },
+      "required": ["readsToday", "writesToday", "readsMonth", "writesMonth"]
+    },
+    "DailyDbConsumption": {
+      "title": "DailyDbConsumption",
+      "description": "Aggregated daily database reads/writes and transfer sizes for the entire platform",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string" },
+        "reads": { "type": "number" },
+        "writes": { "type": "number" },
+        "readBytes": { "type": "number" },
+        "writeBytes": { "type": "number" }
+      },
+      "required": ["date", "reads", "writes"]
+    },
+    "Filiere": {
+      "title": "Filiere",
+      "description": "A study field/filiere configured dynamically in database",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "levels": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string", "enum": ["active", "inactive"] }
+      },
+      "required": ["id", "name", "levels", "status"]
+    },
+    "LicenseFormat": {
+      "title": "LicenseFormat",
+      "description": "A dynamic subscription duration format",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "months": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "inactive"] }
+      },
+      "required": ["id", "name", "months", "status"]
+    },
+    "QuestionGroup": {
+      "title": "QuestionGroup",
+      "description": "A group of questions sharing a common context or stem",
+      "type": "object",
+      "properties": {
+        "context": { "type": "string" },
+        "name": { "type": "string" },
+        "blockId": { "type": "string" },
+        "chapterId": { "type": "string" },
+        "bookId": { "type": "string" }
+      },
+      "required": ["context", "name", "blockId", "chapterId", "bookId"]
+    }
+  },
+  "firestore": {
+    "/books/{bookId}": { "schema": "Book", "description": "Books collection" },
+    "/chapters/{chapterId}": { "schema": "Chapter", "description": "Chapters collection" },
+    "/blocks/{blockId}": { "schema": "Block", "description": "Blocks collection" },
+    "/questions/{questionId}": { "schema": "Question", "description": "Questions collection" },
+    "/question_groups/{groupId}": { "schema": "QuestionGroup", "description": "Collection for question groups with clinical stems" },
+    "/answers/{answerId}": { "schema": "Answer", "description": "Answers collection" },
+    "/userProgress/{userId}": { "schema": "UserProgress", "description": "User progress data" },
+    "/userPlanning/{userId}": { "schema": "UserPlanning", "description": "User planning data" },
+    "/dailyProgress/{userId}/dates/{dateStr}": { "schema": "DailyProgress", "description": "User's daily progress" },
+    "/studyPlans/{planId}": { "schema": "StudyPlan", "description": "User study plans" },
+    "/userErrors/{errorId}": { "schema": "UserError", "description": "User's incorrect questions tracking" },
+    "/exams/{examId}": { "schema": "Exam", "description": "Exams collection" },
+    "/examAttempts/{attemptId}": { "schema": "ExamAttempt", "description": "Exam attempts collection" },
+    "/users/{userId}": { "schema": "User", "description": "User profiles and roles" },
+    "/stats/{statId}": { "schema": "AppStats", "description": "Global application stats" },
+    "/seriesQ/{serieId}": { "schema": "SerieQ", "description": "Collection for special revision series" },
+    "/connections/{logId}": { "schema": "ConnectionLog", "description": "Collection of connection logs" },
+    "/userSavedCards/{cardId}": { "schema": "object", "description": "User saved flashcards" },
+    "/financialHistory/{transactionId}": { "schema": "FinancialHistory", "description": "Financial transaction logs for licensing sales" },
+    "/licenseParams/{licenseId}": { "schema": "LicenseParams", "description": "License global financial parameters" },
+    "/userConsumption/{userId}": { "schema": "UserConsumption", "description": "User storage consumption data" },
+    "/dailyDbConsumption/{dateId}": { "schema": "DailyDbConsumption", "description": "Daily database usage logging and analysis statistics" },
+    "/expenses/{expenseId}": { "schema": "Expense", "description": "Collection of authorized system expenses or payouts" },
+    "/filieres/{filiereId}": { "schema": "Filiere", "description": "Filiere study configurations" },
+    "/licenseFormats/{formatId}": { "schema": "LicenseFormat", "description": "Configurable dynamic license formats" }
+  }
+}

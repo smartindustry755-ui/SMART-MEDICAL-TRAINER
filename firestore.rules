@@ -1,0 +1,146 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return true; // Simplified for custom auth demo
+    }
+    
+    function isAdmin() {
+      return true; // Simplified for custom auth demo
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+    
+    match /books/{bookId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /chapters/{chapterId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /blocks/{blockId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /questions/{questionId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /question_groups/{groupId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /answers/{answerId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    
+    match /userProgress/{document=**} {
+      allow read, write: if true;
+    }
+    
+    match /userPlanning/{document=**} {
+      allow read, write: if true;
+    }
+    
+    match /dailyProgress/{document=**} {
+      allow read, write: if true;
+    }
+    
+    match /studyPlans/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /userErrors/{document=**} {
+      allow read, write: if true;
+    }
+    
+    match /exams/{document=**} {
+      allow read, write: if true;
+    }
+    
+    match /examAttempts/{document=**} {
+      allow read: if true;
+      allow write: if true;
+    }
+    
+    match /test/{document=**} {
+      allow read: if true;
+    }
+    
+    match /users/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /seriesQ/{document=**} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    match /stats/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /connections/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /userSavedCards/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /userLogs/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /userConsumption/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /dailyDbConsumption/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /financialHistory/{document=**} {
+      allow read, write: if true;
+    }
+    
+    match /licenseParams/{document=**} {
+      allow read, write: if true;
+    }
+    
+    match /settings/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /promoCodes/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /expenses/{expenseId} {
+      allow read, write: if true;
+    }
+    match /expenses/{expenseId}/{document=**} {
+      allow read, write: if true;
+    }
+    
+    match /filieres/{document=**} {
+      allow read, write: if true;
+    }
+
+    match /licenseFormats/{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
