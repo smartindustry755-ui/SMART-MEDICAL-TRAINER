@@ -12,7 +12,7 @@ import BusinessIntroducerInterface from './components/BusinessIntroducerInterfac
 import Sidebar from './components/Sidebar.tsx';
 import { auth, db, getDoc, getDocs, setDoc, updateDoc, trackAppHostingStaticAssets } from './lib/firebase';
 import { doc, serverTimestamp, increment, disableNetwork, enableNetwork, collection, query, where } from 'firebase/firestore';
-import { LogIn, User, Lock, Loader2, AlertCircle, MessageCircle, WifiOff, Download, X, Play, GraduationCap, ChevronRight, CheckCircle2, ArrowRight, Star } from 'lucide-react';
+import { LogIn, User, Lock, Loader2, AlertCircle, MessageCircle, WifiOff, Download, X, Play, GraduationCap, ChevronRight, CheckCircle2, ArrowRight, Star, Info } from 'lucide-react';
 import { cn, safeLocalStorage } from './lib/utils';
 import { FILIERE_OPTIONS, getLevelsForFiliere } from './lib/constants';
 
@@ -55,6 +55,7 @@ export default function App() {
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [showInstallInstructions, setShowInstallInstructions] = useState(false);
+  const [installNotification, setInstallNotification] = useState<string | null>(null);
   const [showFiliereSelection, setShowFiliereSelection] = useState(false);
   const [showDemoFiliereSelection, setShowDemoFiliereSelection] = useState(false);
   const [tempSelection, setTempSelection] = useState({ filiere: '', niveau: '' });
@@ -209,6 +210,7 @@ export default function App() {
     const handleBeforeInstallPrompt = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
+      (window as any).deferredPrompt = e;
       
       // Show banner after a short delay if not already installed
       const isInstalled = window.matchMedia('(display-mode: standalone)').matches;
@@ -218,6 +220,28 @@ export default function App() {
         setTimeout(() => setShowInstallBanner(true), 5000);
       }
     };
+
+    const handleDeferredPromptAvailable = (e: any) => {
+      const promptEvent = e.detail || (window as any).deferredPrompt;
+      if (promptEvent) {
+        setDeferredPrompt(promptEvent);
+        const isInstalled = window.matchMedia('(display-mode: standalone)').matches;
+        const hasDismissed = safeLocalStorage.getItem('pwa_install_dismissed') === 'true';
+        if (!isInstalled && !hasDismissed) {
+          setTimeout(() => setShowInstallBanner(true), 5000);
+        }
+      }
+    };
+
+    // Check if there was an early captured prompt stashed in window
+    if ((window as any).deferredPrompt) {
+      setDeferredPrompt((window as any).deferredPrompt);
+      const isInstalled = window.matchMedia('(display-mode: standalone)').matches;
+      const hasDismissed = safeLocalStorage.getItem('pwa_install_dismissed') === 'true';
+      if (!isInstalled && !hasDismissed) {
+        setTimeout(() => setShowInstallBanner(true), 5000);
+      }
+    }
 
     // For iOS, we can't capture beforeinstallprompt, so we show the banner based on detection
     if (isIOSDevice) {
@@ -236,6 +260,7 @@ export default function App() {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('deferredpromptavailable', handleDeferredPromptAvailable);
     window.addEventListener('appinstalled', handleAppInstalled);
 
     // Handle visibility changes for iOS/Safari suspend network issues cleanly
@@ -270,6 +295,7 @@ export default function App() {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('deferredpromptavailable', handleDeferredPromptAvailable);
       window.removeEventListener('appinstalled', handleAppInstalled);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
@@ -282,23 +308,27 @@ export default function App() {
       return;
     }
 
-    if (!deferredPrompt) {
-      setShowInstallInstructions(true);
+    const promptEvent = deferredPrompt || (window as any).deferredPrompt;
+
+    if (!promptEvent) {
+      setInstallNotification("Pour installer Smart Tutor : ouvrez le menu de votre navigateur (⋮) puis 'Ajouter à l'écran d'accueil' ou 'Installer'.");
+      setTimeout(() => setInstallNotification(null), 8000);
       setShowInstallBanner(false);
       return;
     }
 
     try {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
+      promptEvent.prompt();
+      const { outcome } = await promptEvent.userChoice;
       if (outcome === 'accepted') {
         console.log('User accepted the install prompt');
+        setIsPWAInstalled(true);
       }
     } catch (err) {
       console.warn("Could not prompt installation automatically:", err);
-      setShowInstallInstructions(true);
     }
     setDeferredPrompt(null);
+    (window as any).deferredPrompt = null;
     setShowInstallBanner(false);
   };
 
@@ -851,7 +881,7 @@ export default function App() {
       )}
 
       {/* Install Banner */}
-      {showInstallBanner && (deferredPrompt || isIOS) && (
+      {showInstallBanner && !isPWAInstalled && (
         <div className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-[100] w-[92%] sm:w-full sm:max-w-md bg-white/95 backdrop-blur-md rounded-[2rem] sm:rounded-3xl shadow-2xl border border-blue-100 p-4 sm:p-5 flex items-center justify-between gap-3 sm:gap-4 animate-in slide-in-from-bottom-10 duration-500">
           <div className="flex items-center gap-3 sm:gap-4 overflow-hidden">
             <div className="w-11 h-11 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200 shrink-0 overflow-hidden">
@@ -872,7 +902,7 @@ export default function App() {
             </button>
             <button 
               onClick={dismissInstallBanner}
-              className="p-1.5 sm:p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg sm:rounded-xl transition-all"
+              className="p-1.5 sm:p-2 text-gray-400 hover:text-gray-650 hover:bg-gray-100 rounded-lg sm:rounded-xl transition-all"
             >
               <X className="w-5 h-5 sm:w-6 h-6" />
             </button>
@@ -886,7 +916,7 @@ export default function App() {
           onClose={() => setIsSidebarOpen(false)} 
           isAdmin={isAdmin}
           onLogout={handleLogout}
-          onInstall={handleInstallClick}
+          onInstall={!isPWAInstalled ? handleInstallClick : undefined}
           onSwitchToPartnerSpace={(currentUser?.role === 'partner' || currentUser?.role === 'apporteur') ? () => {
             setPartnerWorkspaceMode('partner');
             safeLocalStorage.setItem('ais_partner_mode', 'partner');
@@ -964,6 +994,19 @@ export default function App() {
         <Download className="w-4 h-4 text-white animate-bounce" style={{ animationDuration: '2s' }} />
         <span>Installer l'app</span>
       </button>
+    )}
+    {/* Premium Toast Notification for fallback install instructions */}
+    {installNotification && (
+      <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-[250] w-[92%] sm:w-full sm:max-w-md bg-gray-900 border border-gray-800 text-white rounded-2xl px-4 py-3.5 shadow-2xl flex items-center gap-3 animate-in slide-in-from-bottom-5 fade-in duration-300">
+        <Info className="w-5 h-5 text-blue-400 shrink-0" />
+        <p className="text-xs font-semibold leading-relaxed text-gray-100 flex-1">{installNotification}</p>
+        <button 
+          onClick={() => setInstallNotification(null)}
+          className="p-1 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-white shrink-0"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
     )}
     {renderInstallInstructionsModal()}
     </>

@@ -6,9 +6,18 @@
     <title>SmartWorkBook</title>
     <meta name="theme-color" content="#2563eb" />
     <meta name="description" content="Plateforme d'apprentissage intelligente pour la réussite de vos examens." />
-    <link rel="apple-touch-icon" href="/logo.svg" />
+    <link rel="apple-touch-icon" href="/logo.jpg" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <script>
+      // Capture and stash the PWA install prompt as early as possible
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        window.deferredPrompt = e;
+        console.log('beforeinstallprompt event stashed in window.deferredPrompt');
+        window.dispatchEvent(new CustomEvent('deferredpromptavailable', { detail: e }));
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>

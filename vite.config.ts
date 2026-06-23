@@ -12,7 +12,7 @@ export default defineConfig(({mode}) => {
       tailwindcss(),
       VitePWA({
         registerType: 'prompt',
-        includeAssets: ['logo.svg'],
+        includeAssets: ['logo.jpg'],
         manifest: {
           name: 'Smart Work Book',
           short_name: 'SmartWorkBook',
@@ -22,19 +22,19 @@ export default defineConfig(({mode}) => {
           display: 'standalone',
           icons: [
             {
-              src: 'logo.svg',
+              src: 'logo.jpg',
               sizes: '192x192',
-              type: 'image/svg+xml'
+              type: 'image/jpeg'
             },
             {
-              src: 'logo.svg',
+              src: 'logo.jpg',
               sizes: '512x512',
-              type: 'image/svg+xml'
+              type: 'image/jpeg'
             },
             {
-              src: 'logo.svg',
+              src: 'logo.jpg',
               sizes: '512x512',
-              type: 'image/svg+xml',
+              type: 'image/jpeg',
               purpose: 'any maskable'
             }
           ]
